@@ -1,19 +1,25 @@
 
-
-
 from flask import Flask, render_template, request
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
+import gdown
 
 app = Flask(__name__)
 
-# ✅ モデル読み込み（事前に保存済みのモデル）
-model = load_model("/Users/ishiinaoto/Desktop/model/BEST_MODEL_EARLY_CNN1_DENSE2_LR0.001.keras")
+# モデルのダウンロードと読み込み
+file_id = "1A2B3C4D5E6F7G8H9I0J"  # ← あなたのファイルIDに置き換える
+url = f"https://drive.google.com/uc?id={file_id}"
+model_path = "model.keras"
+
+if not os.path.exists(model_path):
+    gdown.download(url, model_path, quiet=False)
+
+model = load_model(model_path)
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
 
-# ✅ アップロード画像の保存先
+# アップロード画像の保存先
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
