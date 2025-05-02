@@ -9,12 +9,12 @@ import gdown
 app = Flask(__name__)
 
 # モデルのダウンロードと読み込み
-file_id = "1A2B3C4D5E6F7G8H9I0J"  # ← あなたのファイルIDに置き換える
+file_id = "1UTgrarpDvqhYB-5zZVg1ckVowfkyUYIm"  # ← 自分のファイルID
 url = f"https://drive.google.com/uc?id={file_id}"
 model_path = "model.keras"
 
 if not os.path.exists(model_path):
-    gdown.download(url, model_path, quiet=False)
+    gdown.download(url, model_path, quiet=False, fuzzy=True)
 
 model = load_model(model_path)
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
@@ -47,4 +47,4 @@ def home():
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
