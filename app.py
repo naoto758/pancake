@@ -9,7 +9,7 @@ import requests
 app = Flask(__name__)
 
 # モデルのダウンロードと読み込み
-file_id = "1UTgrarpDvqhYB-5zZVg1ckVowfkyUYIm"  # ← 自分のファイルID
+file_id = "1iVogIOYWPWwzwtEgoW_jH1Xb9GXFdmVz"  # ← 自分のファイルID
 url = f"https://drive.google.com/uc?export=download&id={file_id}"
 model_path = "model.keras"
 
