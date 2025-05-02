@@ -13,21 +13,30 @@ file_id = "1UTgrarpDvqhYB-5zZVg1ckVowfkyUYIm"  # ← 自分のファイルID
 url = f"https://drive.google.com/uc?export=download&id={file_id}"
 model_path = "model.keras"
 
-def download_from_google_drive(url, destination):
+def download_from_google_drive(file_id, destination):
+    URL = "https://drive.google.com/uc?export=download"
+
     session = requests.Session()
-    response = session.get(url, stream=True)
+    response = session.get(URL, params={"id": file_id}, stream=True)
+
+    # トークンが必要な場合の確認
+    token = None
     for key, value in response.cookies.items():
         if key.startswith("download_warning"):
-            url = url + "&confirm=" + value
+            token = value
             break
-    with session.get(url, stream=True) as r:
-        with open(destination, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                if chunk:
-                    f.write(chunk)
+
+    if token:
+        params = {"id": file_id, "confirm": token}
+        response = session.get(URL, params=params, stream=True)
+
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(32768):
+            if chunk:
+                f.write(chunk)
 
 if not os.path.exists(model_path):
-    download_from_google_drive(url, model_path)
+    download_from_google_drive(file_id, model_path)
 
 model = load_model(model_path)
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
