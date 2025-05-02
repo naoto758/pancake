@@ -1,8 +1,22 @@
-model/
-cnn/
+# 学習済みモデル（100MB以上の可能性あり）
 *.keras
+*.h5
+
+# 仮想環境関連
+venv/
+.env/
+cnn/lib/
+cnn/include/
+cnn/bin/
+
+# Macの隠しファイルやJupyterのキャッシュ
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+
+# その他の大容量ファイル
 *.dylib
 *.so
-*.pyc
-__pycache__/
-static/uploads/
+*.pkl
+*.ckpt
+
