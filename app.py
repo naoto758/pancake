@@ -27,7 +27,7 @@ def download_from_google_drive(url, destination):
                     f.write(chunk)
 
 if not os.path.exists(model_path):
-    download_from_google_drive(download_url, model_path)
+    download_from_google_drive(url, model_path)
 
 model = load_model(model_path)
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
@@ -60,4 +60,6 @@ def home():
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))  # デフォルト10000（ローカル用）
+    app.run(host="0.0.0.0", port=port)
+
