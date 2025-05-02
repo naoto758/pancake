@@ -36,9 +36,25 @@ def download_from_google_drive(file_id, destination):
                 f.write(chunk)
 
 if not os.path.exists(model_path):
+    print("🔽 モデルをGoogle Driveからダウンロードします...")
     download_from_google_drive(file_id, model_path)
 
-model = load_model(model_path)
+# モデル存在チェックとサイズログ出力
+if not os.path.exists(model_path):
+    print("❌ モデルファイルが存在しません")
+else:
+    size_kb = os.path.getsize(model_path) / 1024
+    print(f"📦 モデルファイルサイズ: {size_kb:.2f} KB")
+    if size_kb < 100:
+        print("⚠️ モデルファイルが非常に小さいため、破損している可能性があります。")
+
+try:
+    model = load_model(model_path)
+    print("✅ モデル読み込み成功")
+except Exception as e:
+    print(f"❌ モデル読み込み失敗: {e}")
+    raise
+
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
 
 # アップロード画像の保存先
@@ -71,4 +87,6 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # デフォルト10000（ローカル用）
     app.run(host="0.0.0.0", port=port)
+
+
 
