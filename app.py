@@ -4,17 +4,30 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
-import gdown
+import requests
 
 app = Flask(__name__)
 
 # モデルのダウンロードと読み込み
 file_id = "1UTgrarpDvqhYB-5zZVg1ckVowfkyUYIm"  # ← 自分のファイルID
-url = f"https://drive.google.com/uc?id={file_id}"
+url = f"https://drive.google.com/uc?export=download&id={file_id}"
 model_path = "model.keras"
 
+def download_from_google_drive(url, destination):
+    session = requests.Session()
+    response = session.get(url, stream=True)
+    for key, value in response.cookies.items():
+        if key.startswith("download_warning"):
+            url = url + "&confirm=" + value
+            break
+    with session.get(url, stream=True) as r:
+        with open(destination, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+
 if not os.path.exists(model_path):
-    gdown.download(url, model_path, quiet=False, fuzzy=True)
+    download_from_google_drive(download_url, model_path)
 
 model = load_model(model_path)
 labels = ['choco', 'classic', 'fruit']  # モデルの出力順に応じたクラス名
