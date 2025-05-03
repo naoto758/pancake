@@ -1,10 +1,9 @@
 from tensorflow.lite.python.interpreter import Interpreter
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from PIL import Image
 import numpy as np
 import os
 import gdown
-from flask import send_from_directory
 
 app = Flask(__name__)
 
@@ -45,11 +44,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    # 画像ファイルへのアクセス設定
     return send_from_directory(os.path.join(app.root_path, 'static/uploads'), filename)
 
 # ----------------------------
-# ルーティング定義
+# メイン画面ルート
 # ----------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -59,20 +57,23 @@ def home():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
 
-            # 画像読み込みと前処理（512x512で正規化）
-            img = Image.open(filepath).resize((512, 512)).convert("RGB")
-            img_array = np.array(img) / 255.0
-            img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
+            try:
+                img = Image.open(filepath).resize((512, 512)).convert("RGB")
+                img_array = np.array(img) / 255.0
+                img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
 
-            # 推論実行（TFLite専用コード）
-            interpreter.set_tensor(input_details[0]['index'], img_array)
-            interpreter.invoke()
-            output_data = interpreter.get_tensor(output_details[0]['index'])
+                interpreter.set_tensor(input_details[0]['index'], img_array)
+                interpreter.invoke()
+                output_data = interpreter.get_tensor(output_details[0]['index'])
 
-            result = labels[np.argmax(output_data)]
-            image_url = file.filename
+                result = labels[np.argmax(output_data)]
+                print("分類成功:", result)
 
-            return render_template("result.html", title="分類結果", result=result, image=image_url)
+            except Exception as e:
+                result = "分類に失敗しました"
+                print("分類エラー:", str(e))
+
+            return render_template("result.html", title="分類結果", result=result, image=file.filename)
 
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
 
