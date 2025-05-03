@@ -56,7 +56,7 @@ def home():
             # 画像読み込みと前処理（512x512で正規化）
             img = Image.open(filepath).resize((512, 512)).convert("RGB")
             img_array = np.array(img) / 255.0
-            img_array = np.expand_dims(img_array, axis=0).astype(np.float16)
+            img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
 
             # 推論実行（TFLite専用コード）
             interpreter.set_tensor(input_details[0]['index'], img_array)
