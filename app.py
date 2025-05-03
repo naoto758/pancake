@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import os
 import gdown
+import traceback
 
 app = Flask(__name__)
 
@@ -51,9 +52,11 @@ def uploaded_file(filename):
 # ----------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
+    print("📥 POSTリクエスト受信")
     if request.method == "POST":
         file = request.files["image"]
         if file:
+            print(f"📸 ファイル名: {file.filename}")
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
 
@@ -72,6 +75,7 @@ def home():
             except Exception as e:
                 result = "分類に失敗しました"
                 print("分類エラー:", str(e))
+                traceback.print_exc()
 
             return render_template("result.html", title="分類結果", result=result, image=file.filename)
 
