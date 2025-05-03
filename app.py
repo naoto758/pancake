@@ -52,7 +52,6 @@ def uploaded_file(filename):
 # メイン画面
 # ----------------------------
 @app.route("/", methods=["GET", "POST"])
-@app.route("/", methods=["GET", "POST"])
 def home():
     print("🔥 home() にアクセスされました")
     print("🔍 request.method:", request.method)
@@ -71,14 +70,35 @@ def home():
             file.save(filepath)
             print("📁 ファイル保存完了:", filepath)
 
-            # --- 以下は推論を一時スキップして、動作確認だけ行う ---
-            return render_template("result.html", title="分類結果", result="保存成功！", image=file.filename)
+            try:
+                print("🖼️ 画像読み込み＆リサイズ")
+                img = Image.open(filepath).resize((512, 512)).convert("RGB")
+                img_array = np.array(img) / 255.0
+                img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
+
+                print("🤖 推論実行中...")
+                interpreter.set_tensor(input_details[0]['index'], img_array)
+                interpreter.invoke()
+                output_data = interpreter.get_tensor(output_details[0]['index'])
+
+                result = labels[np.argmax(output_data)]
+                print("✅ 分類成功:", result)
+
+            except Exception as e:
+                result = "分類に失敗しました"
+                print("❌ 分類エラー:", str(e))
+                traceback.print_exc()
+                return render_template("result.html", title="分類結果", result=result, image=None)
+
+            print("✅ result.html を描画します")
+            return render_template("result.html", title="分類結果", result=result, image=file.filename)
 
         else:
             print("⚠️ ファイルが存在しないか、ファイル名が空です")
             return render_template("index.html", title="パンケーキ画像分類", message="⚠️ 画像ファイルが選択されていません。")
 
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
+
 
 
 # ----------------------------
