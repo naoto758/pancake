@@ -1,6 +1,6 @@
 from tflite_runtime.interpreter import Interpreter
 from flask import Flask, render_template, request
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from PIL import Image
 import numpy as np
 import os
 import gdown
@@ -54,9 +54,9 @@ def home():
             file.save(filepath)
 
             # 画像読み込みと前処理（512x512で正規化）
-            img = load_img(filepath, target_size=(512, 512))
-            img_array = img_to_array(img) / 255.0
-            img_array = np.expand_dims(img_array, axis=0).astype(np.float16)  # Float16でキャスト
+            img = Image.open(filepath).resize((512, 512)).convert("RGB")
+            img_array = np.array(img) / 255.0
+            img_array = np.expand_dims(img_array, axis=0).astype(np.float16)
 
             # 推論実行（TFLite専用コード）
             interpreter.set_tensor(input_details[0]['index'], img_array)
