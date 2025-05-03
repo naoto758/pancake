@@ -16,7 +16,7 @@ url = f"https://drive.google.com/uc?id={file_id}"
 tflite_model_path = "model_fp16.tflite"
 
 if not os.path.exists(tflite_model_path):
-    print("🔽 モデルをGoogle Driveからダウンロード中...")
+    print("\U0001F53D モデルをGoogle Driveからダウンロード中...")
     gdown.download(url, tflite_model_path, quiet=False)
 
 # ----------------------------
@@ -55,6 +55,7 @@ def uploaded_file(filename):
 def home():
     print("📥 リクエスト受信")
     if request.method == "POST":
+        print("📤 POSTデータ:", request.form)
         file = request.files.get("image")
         if file:
             print(f"📸 アップロードファイル名: {file.filename}")
@@ -90,5 +91,5 @@ def home():
 # ----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Flaskアプリ起動中 (ポート: {port})")
+    print(f"\U0001F680 Flaskアプリ起動中 (ポート: {port})")
     app.run(host="0.0.0.0", port=port)
