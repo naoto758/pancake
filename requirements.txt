@@ -3,3 +3,4 @@ tensorflow==2.13.0
 Pillow
 numpy
 gdown
+gunicorn>=20.0.0
