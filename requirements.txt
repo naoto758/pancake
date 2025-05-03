@@ -2,3 +2,4 @@ Flask
 tflite-runtime
 Pillow
 numpy
+gdown
