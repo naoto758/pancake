@@ -16,7 +16,7 @@ url = f"https://drive.google.com/uc?id={file_id}"
 tflite_model_path = "model_fp16.tflite"
 
 if not os.path.exists(tflite_model_path):
-    print("\U0001F53D モデルをGoogle Driveからダウンロード中...")
+    print("🔽 モデルをGoogle Driveからダウンロード中...")
     gdown.download(url, tflite_model_path, quiet=False)
 
 # ----------------------------
@@ -57,7 +57,8 @@ def home():
     if request.method == "POST":
         print("📤 POSTデータ:", request.form)
         file = request.files.get("image")
-        if file:
+
+        if file and file.filename:
             print(f"📸 アップロードファイル名: {file.filename}")
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
@@ -81,8 +82,11 @@ def home():
                 result = "分類に失敗しました"
                 print("❌ 分類エラー:", str(e))
                 traceback.print_exc()
+                return render_template("result.html", title="分類結果", result=result, image=None)
 
             return render_template("result.html", title="分類結果", result=result, image=file.filename)
+        else:
+            return render_template("index.html", title="パンケーキ画像分類", message="⚠️ 画像が選択されていません")
 
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
 
@@ -91,5 +95,5 @@ def home():
 # ----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    print(f"\U0001F680 Flaskアプリ起動中 (ポート: {port})")
+    print(f"🚀 Flaskアプリ起動中 (ポート: {port})")
     app.run(host="0.0.0.0", port=port)

@@ -6,7 +6,13 @@
 </head>
 <body>
     <h1>分類結果: {{ result }}</h1>
-    <img src="{{ url_for('uploaded_file', filename=image) }}" width="300">
+    
+    {% if image %}
+        <img src="{{ url_for('uploaded_file', filename=image) }}" width="300">
+    {% else %}
+        <p style="color:red;">⚠️ 画像が表示できません。ファイルアップロードに失敗した可能性があります。</p>
+    {% endif %}
+    
     <br><a href="/">別の画像で再分類する</a>
 </body>
 </html>
