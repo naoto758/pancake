@@ -1,8 +1,0 @@
-
-
-
-train_datagen = ImageDataGenerator(rescale=1.0/255)
-test_datagen = ImageDataGenerator(rescale=1.0/255)
-
-
-
