@@ -1,4 +1,4 @@
-from tensorflow.lite.python.interpreter import Interpreter
+from tflite_runtime.interpreter import Interpreter  # ← 軽量ランタイムに変更
 from flask import Flask, render_template, request, send_from_directory
 from PIL import Image
 import numpy as np
@@ -98,13 +98,3 @@ def home():
             return render_template("index.html", title="パンケーキ画像分類", message="⚠️ 画像ファイルが選択されていません。")
 
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
-
-
-
-# ----------------------------
-# アプリ起動
-# ----------------------------
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    print(f"🚀 Flaskアプリ起動中 (ポート: {port})")
-    app.run(host="0.0.0.0", port=port)
