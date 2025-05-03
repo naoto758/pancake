@@ -1,7 +1,6 @@
 services:
   - type: web
-    name: pancake-app
+    name: pancake-classifier
     env: python
-    buildCommand: ""
+    buildCommand: pip install -r requirements.txt
     startCommand: python app.py
-    plan: free
