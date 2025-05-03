@@ -9,7 +9,7 @@ import traceback
 app = Flask(__name__)
 
 # ----------------------------
-# Google Driveからモデルを取得
+# モデル取得
 # ----------------------------
 file_id = "1gC1ixOXhn1NGhBRBah71ODWKpuawSX9d"
 url = f"https://drive.google.com/uc?id={file_id}"
@@ -20,24 +20,25 @@ if not os.path.exists(tflite_model_path):
     gdown.download(url, tflite_model_path, quiet=False)
 
 # ----------------------------
-# モデルの読み込み（TFLite用）
+# モデル読み込み
 # ----------------------------
 if not os.path.exists(tflite_model_path):
     raise FileNotFoundError(f"❌ モデルファイルが見つかりません: {tflite_model_path}")
 
+print("✅ モデル読み込み中...")
 interpreter = Interpreter(model_path=tflite_model_path)
 interpreter.allocate_tensors()
-
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
+print("✅ モデル準備完了")
 
 # ----------------------------
-# ラベル設定
+# ラベル
 # ----------------------------
 labels = ['choco', 'classic', 'fruit']
 
 # ----------------------------
-# アップロード用ディレクトリ設定
+# アップロード先
 # ----------------------------
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -48,33 +49,36 @@ def uploaded_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static/uploads'), filename)
 
 # ----------------------------
-# メイン画面ルート
+# メイン画面
 # ----------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
-    print("📥 POSTリクエスト受信")
+    print("📥 リクエスト受信")
     if request.method == "POST":
-        file = request.files["image"]
+        file = request.files.get("image")
         if file:
-            print(f"📸 ファイル名: {file.filename}")
+            print(f"📸 アップロードファイル名: {file.filename}")
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
+            print("📁 ファイル保存完了:", filepath)
 
             try:
+                print("🖼️ 画像読み込み＆リサイズ")
                 img = Image.open(filepath).resize((512, 512)).convert("RGB")
                 img_array = np.array(img) / 255.0
                 img_array = np.expand_dims(img_array, axis=0).astype(np.float32)
 
+                print("🤖 推論実行中...")
                 interpreter.set_tensor(input_details[0]['index'], img_array)
                 interpreter.invoke()
                 output_data = interpreter.get_tensor(output_details[0]['index'])
 
                 result = labels[np.argmax(output_data)]
-                print("分類成功:", result)
+                print("✅ 分類成功:", result)
 
             except Exception as e:
                 result = "分類に失敗しました"
-                print("分類エラー:", str(e))
+                print("❌ 分類エラー:", str(e))
                 traceback.print_exc()
 
             return render_template("result.html", title="分類結果", result=result, image=file.filename)
@@ -86,4 +90,5 @@ def home():
 # ----------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
+    print(f"🚀 Flaskアプリ起動中 (ポート: {port})")
     app.run(host="0.0.0.0", port=port)
