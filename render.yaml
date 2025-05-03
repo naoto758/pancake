@@ -7,6 +7,7 @@ services:
     envVars:
       - key: PORT
         value: 10000
+    rootDir: pancake
 
 build:
   pythonVersion: 3.9.17
