@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import os
 import gdown
+from flask import send_from_directory
 
 app = Flask(__name__)
 
@@ -42,6 +43,11 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    # 画像ファイルへのアクセス設定
+    return send_from_directory(os.path.join(app.root_path, 'static/uploads'), filename)
+
 # ----------------------------
 # ルーティング定義
 # ----------------------------
@@ -64,8 +70,9 @@ def home():
             output_data = interpreter.get_tensor(output_details[0]['index'])
 
             result = labels[np.argmax(output_data)]
+            image_url = os.path.join('uploads', file.filename)  # 相対パスに変更
 
-            return render_template("result.html", title="分類結果", result=result, image=filepath)
+            return render_template("result.html", title="分類結果", result=result, image=image_url)
 
     return render_template("index.html", title="パンケーキ画像分類", message="画像をアップロードして分類してみよう!!")
 

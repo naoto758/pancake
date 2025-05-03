@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>分類結果: {{ result }}</h1>
-    <img src="{{ image }}" width="300">
+    <img src="{{ url_for('uploaded_file', filename=image) }}" width="300">
     <br><a href="/">別の画像で再分類する</a>
 </body>
 </html>
