@@ -70,7 +70,7 @@ def home():
             output_data = interpreter.get_tensor(output_details[0]['index'])
 
             result = labels[np.argmax(output_data)]
-            image_url = os.path.join('uploads', file.filename)  # 相対パスに変更
+            image_url = file.filename
 
             return render_template("result.html", title="分類結果", result=result, image=image_url)
 
