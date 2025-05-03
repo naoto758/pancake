@@ -3,14 +3,24 @@ from tensorflow.lite.python.interpreter import Interpreter
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import numpy as np
 import os
+import gdown
 
 app = Flask(__name__)
 
 # ----------------------------
-# モデルの読み込み（TFLite用）
+# Google Driveからモデルを取得
 # ----------------------------
+file_id = "1gC1ixOXhn1NGhBRBah71ODWKpuawSX9d"
+url = f"https://drive.google.com/uc?id={file_id}"
 tflite_model_path = "model_fp16.tflite"
 
+if not os.path.exists(tflite_model_path):
+    print("🔽 モデルをGoogle Driveからダウンロード中...")
+    gdown.download(url, tflite_model_path, quiet=False)
+
+# ----------------------------
+# モデルの読み込み（TFLite用）
+# ----------------------------
 if not os.path.exists(tflite_model_path):
     raise FileNotFoundError(f"❌ モデルファイルが見つかりません: {tflite_model_path}")
 
