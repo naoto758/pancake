@@ -1,6 +1,7 @@
 Flask
 tflite-runtime
 Pillow
-numpy
+numpy<2.0
 gdown
 gunicorn>=20.0.0
+ 
