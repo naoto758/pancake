@@ -3,11 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background: #fff8f0;
+            color: #5a3e36;
+            text-align: center;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+        form {
+            background: #fff0dc;
+            display: inline-block;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 0.6rem 1.5rem;
+            font-size: 1rem;
+            background-color: #ffcc70;
+            border: none;
+            border-radius: 1rem;
+            color: #5a3e36;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #ffd890;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ message }}</h1>
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('home') }}">
         <input type="file" name="image" accept="image/*">
+        <br>
         <button type="submit">分類する</button>
     </form>
 </body>

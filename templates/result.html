@@ -3,16 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background: #fff8f0;
+            color: #5a3e36;
+            text-align: center;
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        img {
+            border-radius: 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        a {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.5rem 1rem;
+            background: #ffcc70;
+            color: #5a3e36;
+            text-decoration: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        a:hover {
+            background: #ffd890;
+        }
+    </style>
 </head>
 <body>
     <h1>分類結果: {{ result }}</h1>
-    
+
     {% if image %}
         <img src="{{ url_for('uploaded_file', filename=image) }}" width="300">
     {% else %}
         <p style="color:red;">⚠️ 画像が表示できません。ファイルアップロードに失敗した可能性があります。</p>
     {% endif %}
-    
+
     <br><a href="/">別の画像で再分類する</a>
 </body>
 </html>
